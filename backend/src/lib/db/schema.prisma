@@ -1,0 +1,7 @@
+model File {
+    id String @id @default(uuid())
+    name String
+    messageId Int
+    size Int?
+    createdAt DateTime @default(now())
+}

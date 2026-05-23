@@ -1,0 +1,12 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+
+# Environment and sensitive data
+.env
+.session
+
+# Dynamic uploads
+uploads/
