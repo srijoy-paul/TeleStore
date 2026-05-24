@@ -10,3 +10,5 @@ dist/
 
 # Dynamic uploads
 uploads/
+
+/src/generated/prisma

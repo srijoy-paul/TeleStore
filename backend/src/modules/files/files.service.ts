@@ -1,10 +1,23 @@
+import prisma from "../../lib/db/prisma";
 import { uploadFileToTeleStore } from "../../lib/telegram/upload";
+import fs from "fs";
 
 export const uploadFileService = async (filePath: string) => {
     const telegramResponse = await uploadFileToTeleStore(filePath);
     console.log(`Telegram returned: `, `\n Message id: ${telegramResponse.messageId} `, `\n File name: ${telegramResponse.fileName}`)
 
-    //Todo: save in database
+    const stats = fs.statSync(filePath);
 
-    return telegramResponse;
+    // Save metadata in database
+    const savedFile = await prisma.file.create({
+        data: {
+            name: telegramResponse.fileName || "unnamed",
+            telegramMessageId: telegramResponse.messageId,
+            size: stats.size,
+        }
+    });
+
+    console.log(`Saved file in database with ID: ${savedFile.id}`);
+
+    return savedFile;
 }

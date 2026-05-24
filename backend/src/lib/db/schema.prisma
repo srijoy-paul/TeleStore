@@ -1,7 +1,57 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Folder {
+  id String @id @default(cuid())
+  name String
+  telegramId BigInt @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  files File[]
+}
+
 model File {
     id String @id @default(uuid())
+    
     name String
-    messageId Int
+    mimeType String?
     size Int?
+
+    telegramMessageId Int
+    telegramFileId String?
+
+    uploadedBy String?
+
+    folderId String?
+    folder Folder? @relation(fields: [folderId], references: [id])
+
+    isChunked Boolean @default(false)
+    totalChunks Int @default(0)
+    
     createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    chunks FileChunk[]
+}
+
+model FileChunk {
+  id String @id @default(cuid())
+
+  fileId String
+  file File @relation(fields:[fileId], references:[id], onDelete:Cascade)
+
+  chunkIndex Int
+  telegramMessageId Int
+
+  size Int?
+
+  createdAt DateTime @default(now())
+
+  @@unique([fileId, chunkIndex])
 }
